@@ -5,15 +5,32 @@ router = express.Router();
 
 router.get("/products/all", (req, res) => {
   let x = "select * from products";
-  database.connection.query(x, (error, results) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send("Server Error:\n" + error);
-    } else {
-      res.status(200).send(results);
-    }
+  // database.connection.query(x, (error, results) => {
+  //   if (error) {
+  //     console.error(error);
+  //     res.status(500).send("Server Error:\n" + error);
+  //   } else {
+  //     res.status(200).send(results);
+  //   }
+  // });
+
+  q(x, req, res).then((results) => {
+    res.status(200).send(results);
   });
 });
+
+function q(query, req, res) {
+  return new Promise((resolve, reject) => {
+    database.connection.query(query, (err, result) => {
+      if (err) {
+        console.error(error);
+        res.status(500).send("Server Error:\n" + error);
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+}
 
 router.get("/products/by-id", (req, res) => {
   let id = req.query.id; //get id from request
@@ -86,16 +103,17 @@ router.delete("/products/delete/by-id", (req, res) => {
   });
 });
 
-function q(query) {
-  var res = false;
-  database.connection.query(query, (error, results) => {
-    if (error) {
-      console.error(error);
-    } else {
-      res = results;
-    }
+function q(query, req, res) {
+  return new Promise((resolve, reject) => {
+    database.connection.query(query, (err, result) => {
+      if (err) {
+        console.error(error);
+        res.status(500).send("Server Error:\n" + error);
+        reject(err);
+      }
+      resolve(result);
+    });
   });
-  return res;
 }
 
 // function get_all_products() {
@@ -116,12 +134,12 @@ function q(query) {
 //     `);
 // }
 
-function delete_product_by_id(id) {
-  database.q(`
-    delete from products
-    where id = ${id}
-    `);
-}
+// function delete_product_by_id(id) {
+//   database.q(`
+//     delete from products
+//     where id = ${id}
+//     `);
+// }
 
 // function update_price_by_id(id, price) {
 //   database.q(`
