@@ -1,11 +1,23 @@
-const product = require('./product');
+const product = require("./product");
+const express = require("express");
 
-product.get_product_by_id(3);
+//Define Express functions
+server = express();
+router = express.Router();
 
-//product.create_new_product("ipad01", 999);
+//Define GET URI and function
+//Always has request & response params
+router.get("/welcome", (request, response) => {
+  console.log("GET called");
 
-//product.delete_product_by_id(14);
+  //Default is 200, no need status()
+  response.status(200).send("HELLO WORLD");
+});
 
-//product.update_price_by_id(20, 999);
+server.use(router);
 
-product.get_all_products();
+//Start the server
+//Port 3000, callback is optional
+server.listen(3000, () => {
+  console.log("express is running");
+});
